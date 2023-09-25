@@ -1,0 +1,3 @@
+- In your server (src/lib/index.ts) create a stream set and a broadcast method
+- Create an API endpoint like api/stream where a new stream gets returned
+- Get the stream in the frontend via. EventSource

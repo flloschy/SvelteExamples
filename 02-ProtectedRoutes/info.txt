@@ -1,0 +1,4 @@
+- Create a .env in your directory and paste `ADMIN_AUTH=user:password` in
+- Create a hooks.server.ts in /src/ and copy paste the content
+- Create a protected route like /src/routes/protected
+- Now you can only access this route via user and password!
