@@ -6,17 +6,10 @@ This is usefull when you for example create a realtime chat or execute a command
 ## How to do
 
 ### 1 Create the Backend
-Create a Folder called `/src/lib/` and in there the file `index.ts`. This is your backend code
-
-### 2 Create the Streams 
-In the `index.ts` create a set where all the current active connections will be stored
+Create a Folder called `/src/lib/` and in there the file `index.ts`. This is your backend code. \
+In the `index.ts` create a set where all the current active connections will be stored and also a broadcast function to be able to send the data you need a method to send it. This is done like the following 
 ```ts
 export const streams = new Set<ReadableStreamDefaultController>();
-```
-
-### 3 Broadcast
-To be able to send the data you need a method to send it. This is done like the following 
-```ts
 export const broadcast = (message: any) => {
     for (const stream of streams) {
         stream.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(message)}\n\n`));
@@ -24,7 +17,7 @@ export const broadcast = (message: any) => {
 };
 ```
 
-### 4 API endpoint
+### 2 API endpoint
 For the frontend to receive the Stream you may use a API endpoint - this is no must have but I like it :) \
 So, create a API and an API endpoint like `/src/routes/api/stream`, in which you create a server file `+server.ts` \
 In there create a `GET` method and paste in the following:
@@ -57,7 +50,7 @@ export async function GET() {
 }
 ```
 
-### 5 Front end
+### 3 Front end
 In the front end you just need to create a `EventSource` wich references to the API endpoint.
 ```svelte
 <script lang="ts">
