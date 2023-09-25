@@ -1,38 +1,82 @@
-# create-svelte
+# SSE - Server Sent Event
+A Server sent Event in short is the method to send live data from the server to the client *(the browser)*. \
+This is usefull when you for example create a realtime chat or execute a command on the server's system and you want to show its output
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
 
-## Creating a project
+## How to do
 
-If you're seeing this, you've probably already done this step. Congrats!
+### 1 Create the Backend
+Create a Folder called `/src/lib/` and in there the file `index.ts`. This is your backend code
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
+### 2 Create the Streams 
+In the `index.ts` create a set where all the current active connections will be stored
+```ts
+export const streams = new Set<ReadableStreamDefaultController>();
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+### 3 Broadcast
+To be able to send the data you need a method to send it. This is done like the following 
+```ts
+export const broadcast = (message: any) => {
+    for (const stream of streams) {
+        stream.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(message)}\n\n`));
+    }
+};
 ```
 
-## Building
+### 4 API endpoint
+For the frontend to receive the Stream you may use a API endpoint - this is no must have but I like it :) \
+So, create a API and an API endpoint like `/src/routes/api/stream`, in which you create a server file `+server.ts` \
+In there create a `GET` method and paste in the following:
+```ts
+import { streams } from "$lib";
 
-To create a production version of your app:
+export async function GET() {
+    let controller: ReadableStreamDefaultController | undefined;
+    const stream = new ReadableStream({
+        start(control) {
+            controller = control;
+            controller.enqueue(new TextEncoder().encode(": ping\n\n"));
+            streams.add(controller);
+        },
 
-```bash
-npm run build
+        cancel() {
+            if (controller)
+                streams.delete(controller);
+        },
+    });
+    const response = new Response(stream, {
+        headers: {
+            "Content-Type": "text/event-stream",
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+        },
+    }); 
+
+    return response;
+}
 ```
 
-You can preview the production build with `npm run preview`.
+### 5 Front end
+In the front end you just need to create a `EventSource` wich references to the API endpoint.
+```svelte
+<script lang="ts">
+	import { onMount } from "svelte";
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+    let messages:any[] = [];
+    onMount(async () => {
+        const SSE = new EventSource("/api/stream")
+        SSE.onmessage = async (event:MessageEvent) => {
+            const message = JSON.parse(event.data);
+            messages = [...messages, message];
+        }
+    })
+</script>
+
+<div>
+    {#each messages as message}
+        <p>{message.time}: {message.content}</p>
+    {/each}
+</div>
+```
+IMPORTANT: Do **NOT** use `messages.push`, because the following loop wont update, you need to overwrite the whole variable!!
