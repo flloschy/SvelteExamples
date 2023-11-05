@@ -11,4 +11,7 @@ SSE - Server Sent Event - is a way to send data from the server to the client. I
 A protected route is a route where you need a password to access it, this is a simple and save enough method to do exactly this because the server *should* never send the page without the password in the first place.
 
 ## [03 - File Upload](https://github.com/flloschy/SvelteExamples/tree/main/03-FileUpload)
-A page to upload files to the server
+A way to upload files to the server
+
+## [04 - Session](https://github.com/flloschy/SvelteExamples/tree/main/04-Sessions)
+A *(bad, cruel and)* basic example of Sessions and User Authentifikation to give an idea on how to do it your self! [reasons why to do it your self](https://github.com/flloschy/SvelteExamples/tree/main/04-Sessions/README.md#4-info)
