@@ -14,4 +14,4 @@ A protected route is a route where you need a password to access it, this is a s
 A way to upload files to the server
 
 ## [04 - Session](https://github.com/flloschy/SvelteExamples/tree/main/04-Sessions)
-A *(bad, cruel and)* basic example of Sessions and User Authentifikation to give an idea on how to do it your self! [reasons why to do it your self](https://github.com/flloschy/SvelteExamples/tree/main/04-Sessions/README.md#4-info)
+A *(bad, cruel and)* basic example of Sessions and User authentification to give an idea on how to do it your self! [reasons why to do it your self](https://github.com/flloschy/SvelteExamples/tree/main/04-Sessions/README.md#4-info)
